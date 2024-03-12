@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "324367636414",
+    "project_id": "pulsetalk-dee96",
+    "storage_bucket": "pulsetalk-dee96.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:324367636414:android:d6658f7e2a0f4314bc8bef",
+        "android_client_info": {
+          "package_name": "com.example.pulse_talk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDm916_PIBqBArK7m4ZjUN9AXDHoTO4XL4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
