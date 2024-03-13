@@ -5,6 +5,7 @@ import 'package:chat_material3/utils/colors.dart';
 import 'package:chat_material3/utils/my_validator.dart';
 import 'package:chat_material3/widgets/logo.dart';
 import 'package:chat_material3/widgets/text_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 
@@ -26,8 +27,8 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     emailCon = TextEditingController();
     passCon = TextEditingController();
-    passFocusNode= FocusNode();
-    emailFocusNode= FocusNode();
+    passFocusNode = FocusNode();
+    emailFocusNode = FocusNode();
   }
 
   @override
@@ -111,15 +112,28 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 16,
                     ),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (formKey.currentState!.validate()) {
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const LayoutApp(),
-                            ),
-                            (route) => false,
-                          );
+                          await FirebaseAuth.instance
+                              .signInWithEmailAndPassword(
+                                  email: emailCon.text, password: passCon.text)
+                              .then((value) => Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const LayoutApp(),
+                                    ),
+                                    (route) => false,
+                                  ))
+                              .onError(
+                                (error, stackTrace) =>
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      error.toString(),
+                                    ),
+                                  ),
+                                ),
+                              );
                         }
                       },
                       style: ElevatedButton.styleFrom(

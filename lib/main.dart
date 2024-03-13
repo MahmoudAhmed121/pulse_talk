@@ -1,9 +1,12 @@
 import 'package:chat_material3/firebase_options.dart';
+import 'package:chat_material3/layout.dart';
 import 'package:chat_material3/provider/theme_provider.dart';
 import 'package:chat_material3/screens/auth/login_screen.dart';
 import 'package:chat_material3/utils/app_theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,27 +14,43 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(
-    MyApp(
-      themeProvider: ThemeProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => ThemeProvider(),
+        ),
+      ],
+      child: const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, required this.themeProvider});
-  final ThemeProvider themeProvider;
+  const MyApp({
+    super.key,
+  });
+
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'PulseTalk',
       themeMode: ThemeMode.system,
       theme: AppTheme.themeData(
-        //themeProvider.getDarkTheme
-        isDarkTheme: false,
+        isDarkTheme: themeProvider.getDarkTheme,
         context: context,
       ),
-      home: const LoginScreen(),
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return const LayoutApp();
+          } else {
+            return const LoginScreen();
+          }
+        },
+      ),
     );
   }
 }
