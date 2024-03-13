@@ -104,7 +104,7 @@ class _SettingHomeScreenState extends State<SettingHomeScreen> {
               ),
               Card(
                 child: ListTile(
-                  onTap: () => FirebaseAuth.instance.signOut(),
+                  onTap: () async => await FirebaseAuth.instance.signOut(),
                   title: const Text("Signout"),
                   trailing: const Icon(Iconsax.logout_1),
                 ),
