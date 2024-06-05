@@ -1,3 +1,4 @@
+import 'package:chat_material3/firebase/firebase_auth.dart';
 import 'package:chat_material3/screens/auth/login_screen.dart';
 import 'package:chat_material3/utils/colors.dart';
 import 'package:chat_material3/utils/my_validator.dart';
@@ -168,6 +169,7 @@ class _SetupProfileState extends State<SetupProfile> {
                         password: _passCon.text,
                       )
                           .then((value) {
+                        FireAuth.createUser(name: _nameCon.text);
                         Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(

@@ -1,33 +1,35 @@
+import 'package:chat_material3/models/message_model.dart';
 import 'package:chat_material3/utils/colors.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
 
 class ChatMessageCard extends StatelessWidget {
   final int index;
+  final MessageModel message;
   const ChatMessageCard({
     super.key,
     required this.index,
+    required this.message,
   });
 
   @override
   Widget build(BuildContext context) {
+    final bool isMe = message.fromId == FirebaseAuth.instance.currentUser!.uid;
     return Row(
-      mainAxisAlignment:
-          index % 2 == 0 ? MainAxisAlignment.end : MainAxisAlignment.start,
+      mainAxisAlignment: isMe ? MainAxisAlignment.start : MainAxisAlignment.end,
       children: [
-        index % 2 == 0
-            ? IconButton(onPressed: () {}, icon: const Icon(Iconsax.message_edit))
-            : const SizedBox(),
         Card(
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
             bottomLeft: const Radius.circular(16),
             bottomRight: const Radius.circular(16),
-            topLeft:  Radius.circular(index % 2 == 0 ? 16 : 0),
-            topRight: Radius.circular(index % 2 == 0 ? 0 : 16),
+            topLeft: Radius.circular(isMe ? 0 : 16),
+            topRight: Radius.circular(isMe ? 16 : 0),
           )),
-          color: index % 2 == 0
+          color: isMe
               ? Theme.of(context).colorScheme.background
               : AppColor.darkPrimary,
           child: Padding(
@@ -38,20 +40,28 @@ class ChatMessageCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Messagejsdhkjhdks"),
+                  Text(message.msg!),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      index % 2 == 0
+                      isMe
                           ? const Icon(
                               IconlyLight.tickSquare,
                               color: Color.fromARGB(255, 2, 102, 5),
                               size: 18,
                             )
                           : const SizedBox(),
-                          const SizedBox(width: 5,),
+                      const SizedBox(
+                        width: 5,
+                      ),
                       Text(
-                        "06:16 pm",
+                        DateFormat().add_yMMMEd().format(
+                              DateTime.fromMicrosecondsSinceEpoch(
+                                int.parse(
+                                  message.createdAt!,
+                                ),
+                              ),
+                            ),
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
                       const SizedBox(
@@ -64,6 +74,14 @@ class ChatMessageCard extends StatelessWidget {
             ),
           ),
         ),
+        isMe
+            ? IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Iconsax.message_edit,
+                ),
+              )
+            : const SizedBox(),
       ],
     );
   }
