@@ -1,23 +1,41 @@
+import 'package:chat_material3/firebase/fire_database.dart';
 import 'package:chat_material3/models/message_model.dart';
 import 'package:chat_material3/utils/colors.dart';
+import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 
-class ChatMessageCard extends StatelessWidget {
+class ChatMessageCard extends StatefulWidget {
   final int index;
   final MessageModel message;
+  final String roomId;
   const ChatMessageCard({
     super.key,
     required this.index,
     required this.message,
+    required this.roomId,
   });
 
   @override
+  State<ChatMessageCard> createState() => _ChatMessageCardState();
+}
+
+class _ChatMessageCardState extends State<ChatMessageCard> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.message.toId == FirebaseAuth.instance.currentUser!.uid) {
+      FireDatabase.readMessage(
+          roomId: widget.roomId, msgId: widget.message.id!);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final bool isMe = message.fromId == FirebaseAuth.instance.currentUser!.uid;
+    final bool isMe =
+        widget.message.fromId == FirebaseAuth.instance.currentUser!.uid;
     return Row(
       mainAxisAlignment: isMe ? MainAxisAlignment.start : MainAxisAlignment.end,
       children: [
@@ -40,17 +58,40 @@ class ChatMessageCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(message.msg!),
+                  if (widget.message.type == 'text') ...[
+                    Text(widget.message.msg!),
+                  ] else ...[
+                    FancyShimmerImage(
+                      imageUrl: widget.message.msg!,
+                      height: 200,
+                      imageBuilder: (context, imageProvider) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  ],
+                  const SizedBox(
+                    height: 5,
+                  ),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      isMe
-                          ? const Icon(
-                              IconlyLight.tickSquare,
-                              color: Color.fromARGB(255, 2, 102, 5),
-                              size: 18,
-                            )
-                          : const SizedBox(),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Icon(
+                        Iconsax.tick_circle,
+                        color: widget.message.read == ''
+                            ? Colors.grey
+                            : Colors.blue,
+                        size: 18,
+                      ),
                       const SizedBox(
                         width: 5,
                       ),
@@ -58,7 +99,7 @@ class ChatMessageCard extends StatelessWidget {
                         DateFormat().add_yMMMEd().format(
                               DateTime.fromMicrosecondsSinceEpoch(
                                 int.parse(
-                                  message.createdAt!,
+                                  widget.message.createdAt!,
                                 ),
                               ),
                             ),

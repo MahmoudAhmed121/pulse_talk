@@ -51,6 +51,7 @@ class FireDatabase {
     required String userId,
     required String msg,
     required String roomId,
+    String? type,
   }) async {
     final String msgId = const Uuid().v1();
     MessageModel massageModel = MessageModel(
@@ -59,7 +60,7 @@ class FireDatabase {
       fromId: myId,
       msg: msg,
       createdAt: DateTime.now().microsecondsSinceEpoch.toString(),
-      type: 'text',
+      type: type ?? 'text',
       read: '',
     );
 
@@ -71,5 +72,30 @@ class FireDatabase {
         .set(
           massageModel.toJson(),
         );
+
+
+        firestore
+        .collection(chatRooms)
+        .doc(roomId)
+        .update({
+          'last_message': msg,
+          'last_message_time': DateTime.now().microsecondsSinceEpoch.toString(),
+        });
+  }
+
+  static Future<void> readMessage(
+      {required String roomId, required String msgId}) async {
+    try {
+      await firestore
+          .collection(chatRooms)
+          .doc(roomId)
+          .collection('messages')
+          .doc(msgId)
+          .update({
+        'read': DateTime.now().millisecondsSinceEpoch.toString(),
+      });
+    } catch (e) {
+      rethrow;
+    }
   }
 }
