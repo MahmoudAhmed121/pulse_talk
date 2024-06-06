@@ -1,5 +1,4 @@
 import 'package:chat_material3/provider/theme_provider.dart';
-import 'package:chat_material3/screens/auth/login_screen.dart';
 import 'package:chat_material3/screens/settings/profile.dart';
 import 'package:chat_material3/screens/settings/qr_code.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -105,17 +104,13 @@ class _SettingHomeScreenState extends State<SettingHomeScreen> {
               ),
               Card(
                 child: ListTile(
-                  onTap: () async {
-                    await FirebaseAuth.instance.signOut().then((value) {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginScreen()),
-                          (route) => false);
-                    });
+                  onTap: () {
+                    FirebaseAuth.instance.signOut();
                   },
                   title: const Text("Signout"),
-                  trailing: const Icon(Iconsax.logout_1),
+                  trailing: const Icon(
+                    Iconsax.logout_1,
+                  ),
                 ),
               ),
             ],

@@ -9,6 +9,7 @@ import 'package:chat_material3/utils/colors.dart';
 import 'package:chat_material3/utils/constant.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -23,6 +24,9 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
+
+  List selectedList = [];
+  List<String> copyText = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,14 +42,33 @@ class _ChatScreenState extends State<ChatScreen> {
           ],
         ),
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Iconsax.trash),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Iconsax.copy),
-          ),
+          selectedList.isEmpty
+              ? const SizedBox()
+              : IconButton(
+                  onPressed: () {
+                    FireDatabase.deleteMessage(
+                      roomId: widget.roomId,
+                      msgsId: selectedList,
+                    ).whenComplete(() {
+                      selectedList.clear();
+                      copyText.clear();
+                    });
+                    setState(() {});
+                  },
+                  icon: const Icon(Iconsax.trash),
+                ),
+          copyText.isEmpty
+              ? const SizedBox()
+              : IconButton(
+                  onPressed: () {
+                    Clipboard.setData(
+                      ClipboardData(
+                        text: copyText.first,
+                      ),
+                    );
+                  },
+                  icon: const Icon(Iconsax.copy),
+                ),
         ],
       ),
       body: Padding(
@@ -109,10 +132,50 @@ class _ChatScreenState extends State<ChatScreen> {
                           reverse: true,
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (context, index) {
-                            return ChatMessageCard(
-                              index: index,
-                              message: messages[index],
-                              roomId: widget.roomId,
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  selectedList.isNotEmpty
+                                      ? selectedList
+                                              .contains(messages[index].id)
+                                          ? selectedList
+                                              .remove(messages[index].id)
+                                          : selectedList.add(
+                                              messages[index].id!,
+                                            )
+                                      : null;
+                                  messages[index].type == 'text'
+                                      ? copyText.contains(messages[index].msg)
+                                          ? copyText.remove(messages[index].msg)
+                                          : copyText.add(messages[index].msg!)
+                                      : null;
+                                  debugPrint("copyTexttt: $copyText");
+                                });
+                              },
+                              onLongPress: () {
+                                setState(() {
+                                  selectedList.contains(messages[index].id)
+                                      ? selectedList.remove(messages[index].id)
+                                      : selectedList.add(
+                                          messages[index].id!,
+                                        );
+                                });
+                                messages[index].type == 'text'
+                                    ? copyText.contains(messages[index].msg)
+                                        ? copyText.remove(messages[index].msg)
+                                        : copyText.add(messages[index].msg!)
+                                    : null;
+
+                                debugPrint("copyText: $copyText");
+                              },
+                              child: ChatMessageCard(
+                                isSelected: selectedList.contains(
+                                  messages[index].id,
+                                ),
+                                index: index,
+                                message: messages[index],
+                                roomId: widget.roomId,
+                              ),
                             );
                           },
                         );

@@ -121,8 +121,6 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-
-                    
                     final List<ChatRoomModel> items = snapshot.data!.docs
                         .map((e) => ChatRoomModel.fromJson(e.data()))
                         .toList()
@@ -134,7 +132,9 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
                     return ListView.builder(
                       itemCount: items.length,
                       itemBuilder: (context, index) {
-                        return ChatCard(chatRoomModel: items[index]);
+                        return ChatCard(
+                          chatRoomModel: items[index],
+                        );
                       },
                     );
                   } else {

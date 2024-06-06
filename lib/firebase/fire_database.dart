@@ -73,14 +73,10 @@ class FireDatabase {
           massageModel.toJson(),
         );
 
-
-        firestore
-        .collection(chatRooms)
-        .doc(roomId)
-        .update({
-          'last_message': msg,
-          'last_message_time': DateTime.now().microsecondsSinceEpoch.toString(),
-        });
+    firestore.collection(chatRooms).doc(roomId).update({
+      'last_message': msg,
+      'last_message_time': DateTime.now().microsecondsSinceEpoch.toString(),
+    });
   }
 
   static Future<void> readMessage(
@@ -94,6 +90,24 @@ class FireDatabase {
           .update({
         'read': DateTime.now().millisecondsSinceEpoch.toString(),
       });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<void> deleteMessage({
+    required String roomId,
+    required List msgsId,
+  }) async {
+    try {
+      for (var msgId in msgsId) {
+        await firestore
+            .collection(chatRooms)
+            .doc(roomId)
+            .collection('messages')
+            .doc(msgId)
+            .delete();
+      }
     } catch (e) {
       rethrow;
     }
