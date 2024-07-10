@@ -28,7 +28,8 @@ class _ChatMessageCardState extends State<ChatMessageCard> {
   @override
   void initState() {
     super.initState();
-    if (widget.message.toId == FirebaseAuth.instance.currentUser!.uid) {
+    if (widget.message.toId == FirebaseAuth.instance.currentUser!.uid &&
+        widget.message.read!.isEmpty) {
       FireDatabase.readMessage(
           roomId: widget.roomId, msgId: widget.message.id!);
     }

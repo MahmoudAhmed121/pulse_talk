@@ -90,6 +90,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         ..sort(
                           (a, b) => b.createdAt!.compareTo(a.createdAt!),
                         );
+                      debugPrint(messages.first.msg.toString());
                       if (messages.isEmpty) {
                         return GestureDetector(
                           onTap: () => FireDatabase.sendMessage(
@@ -130,7 +131,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       } else {
                         return ListView.builder(
                           reverse: true,
-                          itemCount: snapshot.data!.docs.length,
+                          itemCount: messages.length,
                           itemBuilder: (context, index) {
                             return GestureDetector(
                               onTap: () {

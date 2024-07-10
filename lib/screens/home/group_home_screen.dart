@@ -19,13 +19,13 @@ class _GroupHomeScreenState extends State<GroupHomeScreen> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CreateGroupScreen(),
+                  builder: (context) => const CreateGroupScreen(),
                 ));
           },
-          child: Icon(Iconsax.message_add_1),
+          child: const Icon(Iconsax.message_add_1),
         ),
         appBar: AppBar(
-          title: Text("Group"),
+          title: const Text("Group"),
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -35,7 +35,7 @@ class _GroupHomeScreenState extends State<GroupHomeScreen> {
                   child: ListView.builder(
                 itemCount: 3,
                 itemBuilder: (context, index) {
-                  return GroupCard();
+                  return const GroupCard();
                 },
               ))
             ],
