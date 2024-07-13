@@ -13,7 +13,7 @@ class FireAuth {
       id: user.uid,
       name: name,
       email: user.email,
-      about: '',
+      about: 'Hi there, I am using Chat Pulse Talk',
       createdAt: DateTime.now().microsecondsSinceEpoch.toString(),
       pushToken: '',
       imageUrl: '',

@@ -52,14 +52,20 @@ class _ContactHomeScreenState extends State<ContactHomeScreen> {
             ? Row(
                 children: [
                   Expanded(
-                      child: TextField(
-                    autofocus: true,
-                    controller: searchCon,
-                    decoration: const InputDecoration(
-                      hintText: "Search by name",
-                      border: InputBorder.none,
+                    child: TextField(
+                      autofocus: true,
+                      controller: searchCon,
+                      decoration: const InputDecoration(
+                        hintText: "Search by name",
+                        border: InputBorder.none,
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          searchCon.text == value;
+                        });
+                      },
                     ),
-                  ))
+                  )
                 ],
               )
             : const Text("My Contacts"),
@@ -147,19 +153,25 @@ class _ContactHomeScreenState extends State<ContactHomeScreen> {
                           if (snapshot.hasData) {
                             final List<UserModel> users = snapshot.data!.docs
                                 .map((e) => UserModel.fromJson(e.data()))
-                                .toList();
+                                .where((element) => element.name!
+                                    .toLowerCase()
+                                    .startsWith(searchCon.text.toLowerCase()))
+                                .toList()..sort((a, b) =>  a.name!.compareTo(b.name!),);
                             return ListView.builder(
                               itemCount: users.length,
                               itemBuilder: (context, index) {
-                                return const ContactCard();
+                                return ContactCard(
+                                  user: users[index],
+                                );
                               },
                             );
                           }
-                          return const SizedBox();
+                          return const Center(
+                              child: CircularProgressIndicator());
                         },
                       );
                     } else {
-                      return const Center(child: CircularProgressIndicator());
+                      return const SizedBox();
                     }
                   }),
             )
