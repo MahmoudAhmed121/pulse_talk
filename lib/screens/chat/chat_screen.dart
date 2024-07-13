@@ -145,12 +145,15 @@ class _ChatScreenState extends State<ChatScreen> {
                                               messages[index].id!,
                                             )
                                       : null;
+                                  
+                                  copyText.isNotEmpty ?
                                   messages[index].type == 'text'
                                       ? copyText.contains(messages[index].msg)
                                           ? copyText.remove(messages[index].msg)
                                           : copyText.add(messages[index].msg!)
-                                      : null;
+                                      : null : null;
                                   debugPrint("copyTexttt: $copyText");
+
                                 });
                               },
                               onLongPress: () {
@@ -161,6 +164,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                           messages[index].id!,
                                         );
                                 });
+
                                 messages[index].type == 'text'
                                     ? copyText.contains(messages[index].msg)
                                         ? copyText.remove(messages[index].msg)

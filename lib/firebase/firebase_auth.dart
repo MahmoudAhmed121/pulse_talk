@@ -19,6 +19,7 @@ class FireAuth {
       imageUrl: '',
       lastSeen:  DateTime.now().microsecondsSinceEpoch.toString(),
       online: false,
+      myUsers: [],
     );
 
     await firestore.collection(users).doc(user.uid).set(

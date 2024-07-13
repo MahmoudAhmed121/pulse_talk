@@ -8,6 +8,7 @@ class UserModel {
   final String? imageUrl;
   final String? lastSeen;
   final bool? online;
+  final List? myUsers;
 
   UserModel({
     required this.id,
@@ -19,20 +20,21 @@ class UserModel {
     required this.imageUrl,
     required this.lastSeen,
     required this.online,
+    required this.myUsers,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
-      about: json['about'],
-      createdAt: json['created_at'],
-      pushToken: json['push_token'],
-      imageUrl: json['image_url'],
-      lastSeen: json['last_seen'],
-      online: json['online'],
-    );
+        id: json['id'],
+        name: json['name'],
+        email: json['email'],
+        about: json['about'],
+        createdAt: json['created_at'],
+        pushToken: json['push_token'],
+        imageUrl: json['image_url'],
+        lastSeen: json['last_seen'],
+        online: json['online'],
+        myUsers: json['my_users']);
   }
 
   Map<String, dynamic> toJson() {
@@ -46,6 +48,7 @@ class UserModel {
       'image_url': imageUrl,
       'last_seen': lastSeen,
       'online': online,
+      'my_users': myUsers,
     };
   }
 
@@ -59,6 +62,7 @@ class UserModel {
     String? imageUrl,
     String? lastSeen,
     bool? online,
+    List? myUsers,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -70,6 +74,7 @@ class UserModel {
       imageUrl: imageUrl ?? this.imageUrl,
       lastSeen: lastSeen ?? this.lastSeen,
       online: online ?? this.online,
+      myUsers: myUsers ?? this.myUsers,
     );
   }
 }

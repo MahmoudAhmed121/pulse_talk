@@ -9,6 +9,7 @@ class FireDatabase {
   static final FirebaseFirestore firestore = FirebaseFirestore.instance;
   static final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   static String myId = firebaseAuth.currentUser!.uid;
+
   static Future<void> createChatRoom({required String email}) async {
     final QuerySnapshot<Map<String, dynamic>> userData = await firestore
         .collection(users)
@@ -92,6 +93,22 @@ class FireDatabase {
       });
     } catch (e) {
       rethrow;
+    }
+  }
+
+  static Future<void> addContacts({required String email}) async {
+    final QuerySnapshot<Map<String, dynamic>> userData = await firestore
+        .collection(users)
+        .where('email', isEqualTo: email)
+        .get();
+    if (userData.docs.isNotEmpty) {
+      String userId = userData.docs.first.id;
+
+      if (myId != userId) {
+        await firestore.collection(users).doc(myId).update({
+          "my_users": FieldValue.arrayUnion([userId]),
+        });
+      }
     }
   }
 
