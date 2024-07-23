@@ -44,11 +44,11 @@ class MyApp extends StatelessWidget {
       home: StreamBuilder(
         stream: FirebaseAuth.instance.userChanges(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasData) {
+          if (snapshot.hasData) {
+            debugPrint(FirebaseAuth.instance.currentUser!.uid);
             return const LayoutApp();
           } else {
+            debugPrint('loginnnnnnnnnnnnnnnnnn');
             return const LoginScreen();
           }
         },

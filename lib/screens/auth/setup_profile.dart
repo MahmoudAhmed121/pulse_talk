@@ -168,8 +168,8 @@ class _SetupProfileState extends State<SetupProfile> {
                         email: _emailCon.text,
                         password: _passCon.text,
                       )
-                          .then((value) {
-                        FireAuth.createUser(name: _nameCon.text);
+                          .then((value) async {
+                        await FireAuth.createUser(name: _nameCon.text);
                         Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(

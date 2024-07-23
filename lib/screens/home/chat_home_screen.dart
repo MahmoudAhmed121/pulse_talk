@@ -82,7 +82,7 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
                         onPressed: () async {
                           if (_emailCon.text.isNotEmpty &&
                               _formKey.currentState!.validate()) {
-                            await FireDatabase.createChatRoom(
+                            await FireDatabase().createChatRoom(
                               email: _emailCon.text,
                             ).then((value) {
                               _emailCon.clear();

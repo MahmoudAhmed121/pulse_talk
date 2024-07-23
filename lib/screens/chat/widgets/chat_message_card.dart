@@ -30,7 +30,7 @@ class _ChatMessageCardState extends State<ChatMessageCard> {
     super.initState();
     if (widget.message.toId == FirebaseAuth.instance.currentUser!.uid &&
         widget.message.read!.isEmpty) {
-      FireDatabase.readMessage(
+      FireDatabase().readMessage(
           roomId: widget.roomId, msgId: widget.message.id!);
     }
   }

@@ -1,8 +1,10 @@
 import 'package:chat_material3/models/chat_room_model.dart';
+import 'package:chat_material3/models/group_model.dart';
 import 'package:chat_material3/models/message_model.dart';
 import 'package:chat_material3/utils/constant.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class FireDatabase {
@@ -10,7 +12,7 @@ class FireDatabase {
   static final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   static String myId = firebaseAuth.currentUser!.uid;
 
-  static Future<void> createChatRoom({required String email}) async {
+   Future<void> createChatRoom({required String email}) async {
     final QuerySnapshot<Map<String, dynamic>> userData = await firestore
         .collection(users)
         .where('email', isEqualTo: email)
@@ -48,7 +50,7 @@ class FireDatabase {
     }
   }
 
-  static Future<void> sendMessage({
+   Future<void> sendMessage({
     required String userId,
     required String msg,
     required String roomId,
@@ -80,7 +82,7 @@ class FireDatabase {
     });
   }
 
-  static Future<void> readMessage(
+   Future<void> readMessage(
       {required String roomId, required String msgId}) async {
     try {
       await firestore
@@ -96,7 +98,7 @@ class FireDatabase {
     }
   }
 
-  static Future<void> addContacts({required String email}) async {
+   Future<void> addContacts({required String email}) async {
     final QuerySnapshot<Map<String, dynamic>> userData = await firestore
         .collection(users)
         .where('email', isEqualTo: email)
@@ -105,6 +107,8 @@ class FireDatabase {
       String userId = userData.docs.first.id;
 
       if (myId != userId) {
+        debugPrint(
+            'aaaaaaaaaaaaaaaaaaaaaaaaaa $myId ${userData.docs.first.data().toString()}');
         await firestore.collection(users).doc(myId).update({
           "my_users": FieldValue.arrayUnion([userId]),
         });
@@ -112,7 +116,7 @@ class FireDatabase {
     }
   }
 
-  static Future<void> deleteMessage({
+   Future<void> deleteMessage({
     required String roomId,
     required List msgsId,
   }) async {
@@ -125,6 +129,29 @@ class FireDatabase {
             .doc(msgId)
             .delete();
       }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+   Future<void> createGroup(
+      {required String groupName, required List members}) async {
+    try {
+      final String groupId = const Uuid().v1();
+      members.add(myId);
+      GroupModel chatRoomModel = GroupModel(
+        id: groupId,
+        name: groupName,
+        members: members,
+        admins: [myId],
+        lastMessage: '',
+        image: '',
+        lastMessageTime: DateTime.now().microsecondsSinceEpoch.toString(),
+        createdAt: DateTime.now().microsecondsSinceEpoch.toString(),
+      );
+      await firestore.collection(groups).doc(groupId).set(
+            chatRoomModel.toJson(),
+          );
     } catch (e) {
       rethrow;
     }

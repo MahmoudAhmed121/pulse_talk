@@ -32,12 +32,13 @@ class _GroupHomeScreenState extends State<GroupHomeScreen> {
           child: Column(
             children: [
               Expanded(
-                  child: ListView.builder(
-                itemCount: 3,
-                itemBuilder: (context, index) {
-                  return const GroupCard();
-                },
-              ))
+                child: ListView.builder(
+                  itemCount: 3,
+                  itemBuilder: (context, index) {
+                    return const GroupCard();
+                  },
+                ),
+              )
             ],
           ),
         ));

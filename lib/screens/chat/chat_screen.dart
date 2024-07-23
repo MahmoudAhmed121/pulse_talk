@@ -46,7 +46,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ? const SizedBox()
               : IconButton(
                   onPressed: () {
-                    FireDatabase.deleteMessage(
+                    FireDatabase().deleteMessage(
                       roomId: widget.roomId,
                       msgsId: selectedList,
                     ).whenComplete(() {
@@ -90,10 +90,10 @@ class _ChatScreenState extends State<ChatScreen> {
                         ..sort(
                           (a, b) => b.createdAt!.compareTo(a.createdAt!),
                         );
-                      debugPrint(messages.first.msg.toString());
+
                       if (messages.isEmpty) {
                         return GestureDetector(
-                          onTap: () => FireDatabase.sendMessage(
+                          onTap: () => FireDatabase().sendMessage(
                               userId: widget.userModel.id!,
                               msg: "Assalamu Alaikum 👋",
                               roomId: widget.roomId),
@@ -145,15 +145,18 @@ class _ChatScreenState extends State<ChatScreen> {
                                               messages[index].id!,
                                             )
                                       : null;
-                                  
-                                  copyText.isNotEmpty ?
-                                  messages[index].type == 'text'
-                                      ? copyText.contains(messages[index].msg)
-                                          ? copyText.remove(messages[index].msg)
-                                          : copyText.add(messages[index].msg!)
-                                      : null : null;
-                                  debugPrint("copyTexttt: $copyText");
 
+                                  copyText.isNotEmpty
+                                      ? messages[index].type == 'text'
+                                          ? copyText
+                                                  .contains(messages[index].msg)
+                                              ? copyText
+                                                  .remove(messages[index].msg)
+                                              : copyText
+                                                  .add(messages[index].msg!)
+                                          : null
+                                      : null;
+                                  debugPrint("copyTexttt: $copyText");
                                 });
                               },
                               onLongPress: () {
@@ -234,7 +237,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 IconButton.filled(
                   onPressed: () {
                     if (_messageController.text.isNotEmpty) {
-                      FireDatabase.sendMessage(
+                      FireDatabase().sendMessage(
                         msg: _messageController.text,
                         roomId: widget.roomId,
                         userId: widget.userModel.id!,

@@ -31,6 +31,7 @@ class _ContactHomeScreenState extends State<ContactHomeScreen> {
                   onPressed: () {
                     setState(() {
                       searched = false;
+                      searchCon.clear();
                     });
                   },
                   icon: const Icon(
@@ -114,7 +115,7 @@ class _ContactHomeScreenState extends State<ContactHomeScreen> {
                           backgroundColor:
                               Theme.of(context).colorScheme.primaryContainer),
                       onPressed: () async {
-                        await FireDatabase.addContacts(email: emailCon.text)
+                        await FireDatabase().addContacts(email: emailCon.text)
                             .then((value) {
                           emailCon.clear();
                           Navigator.pop(context);
@@ -144,10 +145,15 @@ class _ContactHomeScreenState extends State<ContactHomeScreen> {
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
+                      final myUsers = snapshot.data!['my_users'];
+
+                      if (myUsers == null || myUsers.isEmpty) {
+                        return const SizedBox();
+                      }
                       return StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection(users)
-                            .where('id', whereIn: snapshot.data!['my_users'])
+                            .where('id', whereIn: myUsers)
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
@@ -156,7 +162,10 @@ class _ContactHomeScreenState extends State<ContactHomeScreen> {
                                 .where((element) => element.name!
                                     .toLowerCase()
                                     .startsWith(searchCon.text.toLowerCase()))
-                                .toList()..sort((a, b) =>  a.name!.compareTo(b.name!),);
+                                .toList()
+                              ..sort(
+                                (a, b) => a.name!.compareTo(b.name!),
+                              );
                             return ListView.builder(
                               itemCount: users.length,
                               itemBuilder: (context, index) {

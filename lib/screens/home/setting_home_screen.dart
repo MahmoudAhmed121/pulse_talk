@@ -106,12 +106,12 @@ class _SettingHomeScreenState extends State<SettingHomeScreen> {
               Card(
                 child: ListTile(
                   onTap: () async {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => const LoginScreen(),
-                      ),
-                    );
-                    await FirebaseAuth.instance.signOut();
+                    return await FirebaseAuth.instance.signOut().then((value) {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const LoginScreen()));
+                    });
                   },
                   title: const Text("Signout"),
                   trailing: const Icon(
